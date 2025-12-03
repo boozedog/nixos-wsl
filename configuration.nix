@@ -27,6 +27,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    aichat
     devbox
     git
     helix
