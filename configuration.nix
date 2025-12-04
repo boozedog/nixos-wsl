@@ -9,9 +9,16 @@
 
 {
   imports = [
-    # include NixOS-WSL modules
-    <nixos-wsl/modules>
+    # NixOS-WSL module is now imported via flake
   ];
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+
+    # Add Determinate Systems binary cache
+    extra-substituters = [ "https://install.determinate.systems" ];
+    extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
+  };
 
   wsl.enable = true;
   wsl.defaultUser = "david";
@@ -32,6 +39,7 @@
     git
     helix
     neovim
+    nixd
     socat
   ];
 

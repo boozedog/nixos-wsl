@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "jnoortheen.nix-ide",
+    "davidanson.vscode-markdownlint",
+    "jetpack-io.devbox"
+  ]
+}
