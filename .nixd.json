@@ -6,11 +6,11 @@
     }
   },
   "formatting": {
-    "command": ["nixpkgs-fmt"]
+    "command": ["alejandra"]
   },
   "options": {
     "nixos": {
-      "expr": "(builtins.getFlake \"/home/david/projects/nixos-wsl\").nixosConfigurations.nixos.options"
+      "expr": "(builtins.getFlake (toString ./.)).nixosConfigurations.nixos.options"
     }
   }
 }

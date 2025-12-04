@@ -44,5 +44,19 @@
         modules = [ ./home.nix ];
         extraSpecialArgs = { inherit self; };
       };
+
+      devShells.${system}.default = pkgs.mkShell {
+        packages = with pkgs; [
+          alejandra
+          nixd
+          nixpkgs-fmt
+          nil
+          statix
+        ];
+        shellHook = ''
+          echo "NixOS-WSL development environment"
+          echo "Available tools: alejandra, nixd, nixpkgs-fmt, nil, statix"
+        '';
+      };
     };
 }

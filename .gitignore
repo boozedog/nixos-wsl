@@ -1,0 +1,24 @@
+# Claude Code
+.claude/
+
+# direnv
+.direnv/
+
+# Nix build results
+result
+result-*
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
