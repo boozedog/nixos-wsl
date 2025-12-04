@@ -7,5 +7,16 @@
       "path": "../nix-darwin"
     }
   ],
-  "settings": {}
+  "settings": {
+    "[nix]": {
+      "editor.defaultFormatter": "jnoortheen.nix-ide",
+      "editor.formatOnSave": true
+    },
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nixd",
+    "nix.formatterPath": [
+      "alejandra",
+      "--quiet"
+    ]
+  }
 }

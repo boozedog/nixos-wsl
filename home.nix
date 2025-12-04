@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-
+{ pkgs, ... }:
 {
   home.username = "david";
   home.homeDirectory = "/home/david";
@@ -18,20 +17,21 @@
       npiperelay-wrapper = pkgs.writeShellScript "npiperelay-wrapper" ''
         exec "/mnt/c/Program Files/WinGet/Links/npiperelay.exe" "$@"
       '';
-    in {
-    Unit = {
-      Description = "SSH Agent Bridge to Windows Bitwarden";
+    in
+    {
+      Unit = {
+        Description = "SSH Agent Bridge to Windows Bitwarden";
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${pkgs.socat}/bin/socat UNIX-LISTEN:%h/.ssh/agent.sock,fork,unlink-early EXEC:\"${npiperelay-wrapper} -ei -s //./pipe/openssh-ssh-agent\",nofork";
+        Restart = "on-failure";
+        RestartSec = "1s";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
     };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.socat}/bin/socat UNIX-LISTEN:%h/.ssh/agent.sock,fork,unlink-early EXEC:\"${npiperelay-wrapper} -ei -s //./pipe/openssh-ssh-agent\",nofork";
-      Restart = "on-failure";
-      RestartSec = "1s";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
 
   # Shell configuration
   programs = {

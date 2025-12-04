@@ -15,12 +15,41 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pre-commit-hooks = {
+      url = "github:cachix/pre-commit-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, determinate, home-manager, ... }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-wsl,
+      determinate,
+      home-manager,
+      treefmt-nix,
+      pre-commit-hooks,
+      ...
+    }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          treefmt = {
+            enable = true;
+            package = treefmtEval.config.build.wrapper;
+          };
+          statix.enable = true;
+        };
+      };
     in
     {
       nixosConfigurations = {
@@ -45,18 +74,26 @@
         extraSpecialArgs = { inherit self; };
       };
 
+      formatter.${system} = treefmtEval.config.build.wrapper;
+
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          alejandra
+          nixfmt-rfc-style
           nixd
-          nixpkgs-fmt
-          nil
           statix
+          treefmtEval.config.build.wrapper
         ];
         shellHook = ''
+          ${pre-commit-check.shellHook}
           echo "NixOS-WSL development environment"
-          echo "Available tools: alejandra, nixd, nixpkgs-fmt, nil, statix"
+          echo "Available tools: treefmt, nixfmt-rfc-style, nixd, statix"
+          echo "Pre-commit hooks installed: treefmt, statix"
         '';
+      };
+
+      checks.${system} = {
+        formatting = treefmtEval.config.build.check self;
+        pre-commit = pre-commit-check;
       };
     };
 }

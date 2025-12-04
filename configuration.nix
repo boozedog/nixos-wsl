@@ -1,19 +1,19 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 # NixOS-WSL specific options are documented on the NixOS-WSL repository:
 # https://github.com/nix-community/NixOS-WSL
-
-{ config, lib, pkgs, ... }:
-
+{ pkgs, ... }:
 {
   imports = [
     # NixOS-WSL module is now imported via flake
   ];
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     # Add Determinate Systems binary cache
     extra-substituters = [ "https://install.determinate.systems" ];
@@ -29,6 +29,14 @@
     enable = true;
     defaultUser = "david";
     interop.register = true;
+  };
+
+  documentation.man.enable = false;
+
+  users.users.david = {
+    isNormalUser = true;
+    shell = pkgs.fish;
+    extraGroups = [ "wheel" ];
   };
 
   programs = {
@@ -55,7 +63,6 @@
       # Language servers
       awk-language-server
       dockerfile-language-server
-      nil
       nixd
       nodePackages.vscode-json-languageserver
 
