@@ -20,8 +20,11 @@
     extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
   };
 
-  wsl.enable = true;
-  wsl.defaultUser = "david";
+  wsl = {
+    enable = true;
+    defaultUser = "david";
+    interop.register = true;
+  };
 
   programs = {
     direnv = {
@@ -42,6 +45,28 @@
     nixd
     socat
   ];
+
+  # SSH Agent Bridge for Bitwarden (Windows -> WSL)
+  systemd.user.services.ssh-agent-bridge =
+    let
+      npiperelay-wrapper = pkgs.writeShellScript "npiperelay-wrapper" ''
+        exec "/mnt/c/Program Files/WinGet/Links/npiperelay.exe" "$@"
+      '';
+    in {
+    description = "SSH Agent Bridge to Windows Bitwarden";
+    wantedBy = [ "default.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = ''${pkgs.socat}/bin/socat UNIX-LISTEN:%h/.ssh/agent.sock,fork,unlink-early EXEC:"${npiperelay-wrapper} -ei -s //./pipe/openssh-ssh-agent",nofork'';
+      Restart = "on-failure";
+      RestartSec = "1s";
+    };
+  };
+
+  # Set SSH_AUTH_SOCK environment variable globally
+  environment.sessionVariables = {
+    SSH_AUTH_SOCK = "$HOME/.ssh/agent.sock";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
