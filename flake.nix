@@ -32,7 +32,7 @@
       nixos-wsl,
       determinate,
       home-manager,
-      treefmt-nix
+      treefmt-nix,
       pre-commit-hooks,
       ...
     }:
@@ -60,9 +60,11 @@
             determinate.nixosModules.default
             home-manager.nixosModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.david = import ./home.nix;
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.david = import ./home.nix;
+              };
             }
             ./configuration.nix
           ];
@@ -79,14 +81,14 @@
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           nixfmt-rfc-style
-          nixd
+          nil
           statix
           treefmtEval.config.build.wrapper
         ];
         shellHook = ''
           ${pre-commit-check.shellHook}
           echo "NixOS-WSL development environment"
-          echo "Available tools: treefmt, nixfmt-rfc-style, nixd, statix"
+          echo "Available tools: treefmt, nixfmt-rfc-style, nil, statix"
           echo "Pre-commit hooks installed: treefmt, statix"
         '';
       };

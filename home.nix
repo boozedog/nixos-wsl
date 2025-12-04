@@ -1,8 +1,10 @@
 { pkgs, ... }:
 {
-  home.username = "david";
-  home.homeDirectory = "/home/david";
-  home.stateVersion = "25.05";
+  home = {
+    username = "david";
+    homeDirectory = "/home/david";
+    stateVersion = "25.05";
+  };
 
   # Disable manual generation to avoid warnings
   manual = {
@@ -51,23 +53,23 @@
       plugins = [
         {
           name = "autopair";
-          src = pkgs.fishPlugins.autopair.src;
+          inherit (pkgs.fishPlugins.autopair) src;
         }
         {
           name = "done";
-          src = pkgs.fishPlugins.done.src;
+          inherit (pkgs.fishPlugins.done) src;
         }
         {
           name = "forgit";
-          src = pkgs.fishPlugins.forgit.src;
+          inherit (pkgs.fishPlugins.forgit) src;
         }
         {
           name = "fzf-fish";
-          src = pkgs.fishPlugins.fzf-fish.src;
+          inherit (pkgs.fishPlugins.fzf-fish) src;
         }
         {
           name = "sponge";
-          src = pkgs.fishPlugins.sponge.src;
+          inherit (pkgs.fishPlugins.sponge) src;
         }
       ];
       shellAbbrs = {

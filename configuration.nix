@@ -63,7 +63,7 @@
       # Language servers
       awk-language-server
       dockerfile-language-server
-      nixd
+      nil
       nodePackages.vscode-json-languageserver
 
       # Nix tools
