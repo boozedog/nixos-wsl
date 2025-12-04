@@ -20,6 +20,11 @@
     extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
   };
 
+  # Since Determinate Nix installer is already managing Nix,
+  # the determinate module in the flake provides the integration.
+  # Custom settings would be configured via the Determinate Nix installer
+  # or in /etc/nix/nix.custom.conf if using Determinate Nix 3.x
+
   wsl = {
     enable = true;
     defaultUser = "david";
@@ -36,15 +41,36 @@
     nix-ld.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    aichat
-    devbox
-    git
-    helix
-    neovim
-    nixd
-    socat
-  ];
+  environment = {
+    systemPackages = with pkgs; [
+      # Development tools
+      aichat
+      devbox
+      git
+      git-extras
+      helix
+      neovim
+      tree
+
+      # Language servers
+      awk-language-server
+      dockerfile-language-server
+      nil
+      nixd
+      nodePackages.vscode-json-languageserver
+
+      # Nix tools
+      nixfmt-rfc-style
+      nodePackages.npm-check-updates
+
+      # System tools
+      socat
+    ];
+
+    variables = {
+      EDITOR = "hx";
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

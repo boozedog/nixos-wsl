@@ -17,22 +17,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, determinate, home-manager, ... }: {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          nixos-wsl.nixosModules.wsl
-          determinate.nixosModules.default
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.david = import ./home.nix;
-          }
-          ./configuration.nix
-        ];
+  outputs = { self, nixpkgs, nixos-wsl, determinate, home-manager, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      nixosConfigurations = {
+        nixos = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            nixos-wsl.nixosModules.wsl
+            determinate.nixosModules.default
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.david = import ./home.nix;
+            }
+            ./configuration.nix
+          ];
+        };
+      };
+      homeConfigurations.david = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ ./home.nix ];
+        extraSpecialArgs = { inherit self; };
       };
     };
-  };
 }
