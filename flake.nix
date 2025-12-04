@@ -32,7 +32,7 @@
       nixos-wsl,
       determinate,
       home-manager,
-      treefmt-nix,
+      treefmt-nix
       pre-commit-hooks,
       ...
     }:
